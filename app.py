@@ -1,9 +1,13 @@
-from fastapi import FastAPI
 from fastapi import APIRouter
-from event import user_module_router
+from event import user_module_router, category_module_router
+from event.auth_module import router as auth_router
 
-app = FastAPI()
+# Main API Router
+router = APIRouter(prefix="/api/v1")
 
-router = APIRouter()
-router.prefix = "/api/v1"
-app.include_router(router)
+# Include all module routers
+router.include_router(auth_router)
+router.include_router(user_module_router)
+router.include_router(category_module_router)
+
+
