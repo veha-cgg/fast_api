@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from models.categories import Category, CategoryCreate, CategoryUpdate, CategoryResponse
+from models.images import Image, ImageResponse
 from database import get_session
 from datetime import datetime
 from auth.dependencies import require_role, oauth2_scheme
@@ -16,9 +17,33 @@ router = APIRouter(
 
 @router.get("/get-categories", response_model=list[CategoryResponse])
 def get_categories(session: Session = Depends(get_session)):
-    statement = select(Category)
-    categories = session.exec(statement).all()
-    return categories
+    categories = session.exec(select(Category)).all()
+    category_ids = [cat.id for cat in categories]
+    images = session.exec(select(Image).where(Image.category_id.in_(category_ids))).all() if category_ids else []
+    images_by_category = {}
+    for img in images:
+        if img.category_id not in images_by_category:
+            images_by_category[img.category_id] = []
+        images_by_category[img.category_id].append(img)
+    
+    # Convert to CategoryResponse with images
+    return [
+        CategoryResponse(
+            id=cat.id,
+            name=cat.name,
+            description=cat.description,
+            created_at=cat.created_at,
+            updated_at=cat.updated_at,
+            images=[ImageResponse(
+                id=img.id,
+                url=img.url,
+                category_id=img.category_id,
+                created_at=img.created_at,
+                updated_at=img.updated_at
+            ) for img in images_by_category.get(cat.id, [])]
+        )
+        for cat in categories
+    ]
 
 @router.get("/get-category/{category_id}", response_model=CategoryResponse)
 def get_category(category_id: int, session: Session = Depends(get_session)):
@@ -28,7 +53,22 @@ def get_category(category_id: int, session: Session = Depends(get_session)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Category with id {category_id} not found"
         )
-    return category
+    # Get images for this category
+    images = session.exec(select(Image).where(Image.category_id == category_id)).all()
+    return CategoryResponse(
+        id=category.id,
+        name=category.name,
+        description=category.description,
+        created_at=category.created_at,
+        updated_at=category.updated_at,
+        images=[ImageResponse(
+            id=img.id,
+            url=img.url,
+            category_id=img.category_id,
+            created_at=img.created_at,
+            updated_at=img.updated_at
+        ) for img in images]
+    )
 
 @router.post("/create-category", response_model=CategoryResponse,
              status_code=status.HTTP_201_CREATED,
@@ -54,7 +94,22 @@ def create_category(category: CategoryCreate,
     session.add(new_category)
     session.commit()
     session.refresh(new_category)
-    return new_category
+    # Get images for this category (will be empty for new category)
+    images = session.exec(select(Image).where(Image.category_id == new_category.id)).all()
+    return CategoryResponse(
+        id=new_category.id,
+        name=new_category.name,
+        description=new_category.description,
+        created_at=new_category.created_at,
+        updated_at=new_category.updated_at,
+        images=[ImageResponse(
+            id=img.id,
+            url=img.url,
+            category_id=img.category_id,
+            created_at=img.created_at,
+            updated_at=img.updated_at
+        ) for img in images]
+    )
 
 @router.put("/update-category/{category_id}", response_model=CategoryResponse,
             dependencies=[Depends(require_role(UserRole.admin))])
@@ -91,7 +146,22 @@ def update_category(category_id: int, category_update: CategoryUpdate, current_u
     session.add(category)
     session.commit()
     session.refresh(category)
-    return category
+    # Get images for this category
+    images = session.exec(select(Image).where(Image.category_id == category.id)).all()
+    return CategoryResponse(
+        id=category.id,
+        name=category.name,
+        description=category.description,
+        created_at=category.created_at,
+        updated_at=category.updated_at,
+        images=[ImageResponse(
+            id=img.id,
+            url=img.url,
+            category_id=img.category_id,
+            created_at=img.created_at,
+            updated_at=img.updated_at
+        ) for img in images]
+    )
 
 @router.delete("/delete-category/{category_id}", status_code=status.HTTP_204_NO_CONTENT,
                dependencies=[Depends(require_role(UserRole.admin))])

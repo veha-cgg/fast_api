@@ -6,11 +6,10 @@ from auth.dependencies import get_current_user
 from models.users import User, Token, UserResponse, RefreshTokenRequest, UserCreate, UserData, TokenData, LoginRequest
 from database import get_session
 from auth import Auth
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter()
 
 
 def _authenticate_user(email: str, password: str, session: Session) -> User:
-    """Helper function to authenticate user"""
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
         raise HTTPException(

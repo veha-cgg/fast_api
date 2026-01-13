@@ -52,9 +52,6 @@ async def get_current_active_user(
 def get_current_user_response(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ) -> UserResponse:
-    from .jwt import create_access_token
-    access_token = create_access_token(data={"sub": current_user.email})
-    
     return UserResponse(
         data=UserData(
             id=current_user.id,
@@ -66,7 +63,8 @@ def get_current_user_response(
             updated_at=current_user.updated_at
         ),
         token=TokenData(
-            access_token=access_token,
+            access_token="",
+            # refresh_token=None,
             token_type="bearer"
         )
     )

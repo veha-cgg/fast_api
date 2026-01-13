@@ -23,7 +23,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
 def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Create a JWT refresh token"""
     to_encode = data.copy()
@@ -35,7 +34,6 @@ def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) 
     to_encode.update({"exp": expire, "type": "refresh"})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
 
 def verify_access_token(token: str) -> dict:
     """Verify and decode an access token"""
@@ -49,7 +47,6 @@ def verify_access_token(token: str) -> dict:
     except jwt.InvalidTokenError:
         raise ValueError("Invalid token")
 
-
 def verify_refresh_token(token: str) -> dict:
     """Verify and decode a refresh token"""
     try:
@@ -62,11 +59,9 @@ def verify_refresh_token(token: str) -> dict:
     except jwt.InvalidTokenError:
         raise ValueError("Invalid refresh token")
 
-
 def decode_access_token(token: str) -> dict:
     """Decode access token without verification (use verify_access_token for validation)"""
     return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options={"verify_signature": False})
-
 
 def decode_refresh_token(token: str) -> dict:
     """Decode refresh token without verification (use verify_refresh_token for validation)"""
