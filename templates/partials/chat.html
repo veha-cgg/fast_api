@@ -1,0 +1,83 @@
+<div id="chat-section" class="content-section" style="display: none;">
+    <div class="chat-container">
+        <div class="chat-layout">
+            <!-- User List Sidebar -->
+            <div class="chat-users-sidebar">
+                <div class="chat-users-header">
+                    <h5><i class="bi bi-chat-dots"></i> Messages</h5>
+                    <div class="online-status-indicator">
+                        <span class="status-dot online"></span>
+                        <span id="current-user-name">You</span>
+                    </div>
+                </div>
+                <div class="chat-users-search">
+                    <input type="text" id="user-search" placeholder="Search users..." class="form-control">
+                </div>
+                <div class="chat-users-list" id="chat-users-list">
+                    <div class="loading-users">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span>Loading users...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Window -->
+            <div class="chat-window-container">
+                <div id="no-chat-selected" class="no-chat-selected">
+                    <div class="no-chat-icon">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+                    <h4>Select a user to start chatting</h4>
+                    <p>Choose a user from the list to begin your conversation</p>
+                </div>
+
+                <div id="chat-window" class="chat-window" style="display: none;">
+                    <div class="chat-header">
+                        <div class="chat-header-info">
+                            <div class="user-avatar">
+                                <span id="chat-user-initial">U</span>
+                            </div>
+                            <div class="chat-header-details">
+                                <h6 id="chat-user-name">User Name</h6>
+                                <span id="chat-user-status" class="user-status">
+                                    <span class="status-dot offline"></span>
+                                    <span>Offline</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="chat-header-actions">
+                            <button class="btn-icon" title="More options">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be loaded here -->
+                    </div>
+
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <button class="btn-icon" title="Attach file">
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+                            <input 
+                                type="text" 
+                                id="chat-message-input" 
+                                class="chat-input" 
+                                placeholder="Type a message..."
+                                autocomplete="off"
+                            >
+                            <button id="send-message-btn" class="btn-send" title="Send message">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

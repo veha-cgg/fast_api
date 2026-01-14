@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from models.categories import Category, CategoryCreate, CategoryUpdate, CategoryResponse
-from models.images import Image, ImageResponse
+from models.images import Image, ImageData
 from database import get_session
 from datetime import datetime
 from auth.dependencies import require_role, oauth2_scheme
@@ -34,7 +34,7 @@ def get_categories(session: Session = Depends(get_session)):
             description=cat.description,
             created_at=cat.created_at,
             updated_at=cat.updated_at,
-            images=[ImageResponse(
+            images=[ImageData(
                 id=img.id,
                 url=img.url,
                 category_id=img.category_id,
@@ -61,7 +61,7 @@ def get_category(category_id: int, session: Session = Depends(get_session)):
         description=category.description,
         created_at=category.created_at,
         updated_at=category.updated_at,
-        images=[ImageResponse(
+        images=[ImageData(
             id=img.id,
             url=img.url,
             category_id=img.category_id,
@@ -75,7 +75,7 @@ def get_category(category_id: int, session: Session = Depends(get_session)):
              dependencies=[Depends(oauth2_scheme)]
              )
 def create_category(category: CategoryCreate, 
-                    _: Annotated[User, Depends(require_role(UserRole.admin))], 
+                    _: Annotated[User, Depends(require_role(UserRole.admin , UserRole.super_admin))], 
                     session: Session = Depends(get_session)) -> Category:
     statement = select(Category).where(Category.name == category.name)
     existing_category = session.exec(statement).first()
@@ -102,7 +102,7 @@ def create_category(category: CategoryCreate,
         description=new_category.description,
         created_at=new_category.created_at,
         updated_at=new_category.updated_at,
-        images=[ImageResponse(
+        images=[ImageData(
             id=img.id,
             url=img.url,
             category_id=img.category_id,
@@ -112,10 +112,10 @@ def create_category(category: CategoryCreate,
     )
 
 @router.put("/update-category/{category_id}", response_model=CategoryResponse,
-            dependencies=[Depends(require_role(UserRole.admin))])
+            dependencies=[Depends(require_role(UserRole.admin , UserRole.super_admin))])
 def update_category(category_id: int, category_update: CategoryUpdate, current_user: Annotated[User, Depends(get_current_user)],
                     session: Session = Depends(get_session)) -> Category:
-    if current_user.role != UserRole.admin:
+    if current_user.role != UserRole.admin and current_user.role != UserRole.super_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to update a category"
@@ -127,7 +127,6 @@ def update_category(category_id: int, category_update: CategoryUpdate, current_u
             detail=f"Category with id {category_id} not found"
         )
     
-    # Check if name is being updated and if it already exists
     if category_update.name and category_update.name != category.name:
         statement = select(Category).where(Category.name == category_update.name)
         existing_category = session.exec(statement).first()
@@ -137,7 +136,6 @@ def update_category(category_id: int, category_update: CategoryUpdate, current_u
                 detail=f"Category with name {category_update.name} already exists"
             )
     
-    # Update fields
     category_data = category_update.model_dump(exclude_unset=True)
     for field, value in category_data.items():
         setattr(category, field, value)
@@ -146,7 +144,6 @@ def update_category(category_id: int, category_update: CategoryUpdate, current_u
     session.add(category)
     session.commit()
     session.refresh(category)
-    # Get images for this category
     images = session.exec(select(Image).where(Image.category_id == category.id)).all()
     return CategoryResponse(
         id=category.id,
@@ -154,7 +151,7 @@ def update_category(category_id: int, category_update: CategoryUpdate, current_u
         description=category.description,
         created_at=category.created_at,
         updated_at=category.updated_at,
-        images=[ImageResponse(
+        images=[ImageData(
             id=img.id,
             url=img.url,
             category_id=img.category_id,
@@ -164,9 +161,9 @@ def update_category(category_id: int, category_update: CategoryUpdate, current_u
     )
 
 @router.delete("/delete-category/{category_id}", status_code=status.HTTP_204_NO_CONTENT,
-               dependencies=[Depends(require_role(UserRole.admin))])
+               dependencies=[Depends(require_role(UserRole.admin , UserRole.super_admin))])
 def delete_category(category_id: int, current_user: Annotated[User, Depends(get_current_user)], session: Session = Depends(get_session)):
-    if current_user.role != UserRole.admin:
+    if current_user.role != UserRole.admin and current_user.role != UserRole.super_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to delete a category"

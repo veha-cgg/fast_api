@@ -8,7 +8,6 @@ from database import get_session
 from auth import Auth
 router = APIRouter()
 
-
 def _authenticate_user(email: str, password: str, session: Session) -> User:
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
@@ -31,10 +30,10 @@ def _authenticate_user(email: str, password: str, session: Session) -> User:
 @router.post("/login", response_model=UserResponse, 
              summary="Login with OAuth2 form (for Swagger UI)")
 def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Session = Depends(get_session)) -> UserResponse:
-    """Login endpoint using OAuth2PasswordRequestForm (works with Swagger UI)"""
     user = _authenticate_user(form_data.username, form_data.password, session)
     access_token = Auth.create_access_token(data={"sub": user.email, "role": getattr(user.role, "value", user.role)})
     return UserResponse(
+        message="Login successfully",
         data=UserData(
             id=user.id, 
             name=user.name,
@@ -55,6 +54,7 @@ def login_json(login_data: LoginRequest, session: Session = Depends(get_session)
     user = _authenticate_user(login_data.email, login_data.password, session)
     access_token = Auth.create_access_token(data={"sub": user.email, "role": getattr(user.role, "value", user.role)})
     return UserResponse(
+        message="Login successfully",
         data=UserData(
             id=user.id, 
             name=user.name,
@@ -74,7 +74,6 @@ def register(
     session: Session = Depends(get_session)
 ) -> UserResponse:
     """Register a new user account"""
-    # Check existing user
     existing = session.exec(
         select(User).where(User.email == user_create.email)
     ).first()
@@ -85,7 +84,6 @@ def register(
             detail="Email already registered"
         )
 
-    # Create new user instance
     hashed_pwd = Auth.hash_password(user_create.password)
 
     new_user = User(
@@ -103,9 +101,9 @@ def register(
     access_token = Auth.create_access_token(
         data={"sub": new_user.email, "role": getattr(new_user.role, "value", new_user.role)}
     )
-    # refresh_token = Auth.create_refresh_token(data={"sub": new_user.email})
 
     return UserResponse(
+        message="Register successfully",
         data=UserData(
             id=new_user.id,
             name=new_user.name,
@@ -117,7 +115,6 @@ def register(
         ),
         token=TokenData(
             access_token=access_token,
-            # refresh_token=refresh_token,
             token_type="bearer"
         )
     )

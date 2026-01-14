@@ -1,11 +1,13 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from database import connect_to_database, disconnect_from_database
-from main_router import router
+from main_router import router, web_router
+from websocket import router as websocket_router
 import time 
-from fastapi.responses import FileResponse
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -85,6 +87,23 @@ def create_application() -> FastAPI:
     # Include main router
     app.include_router(router)
     
+    # Include web router
+    app.include_router(web_router)
+    
+    # Include websocket router
+    app.include_router(websocket_router)
+    
+    # Mount static files
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+    if not os.path.exists(STATIC_DIR):
+        os.makedirs(os.path.join(STATIC_DIR, "css"), exist_ok=True)
+        os.makedirs(os.path.join(STATIC_DIR, "js"), exist_ok=True)
+        os.makedirs(os.path.join(STATIC_DIR, "images"), exist_ok=True)
+    
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+    
     # Add middleware for process time
     @app.middleware("http")
     async def add_process_time_header(request: Request, call_next):
@@ -93,11 +112,6 @@ def create_application() -> FastAPI:
         process_time = time.perf_counter() - start_time
         response.headers["X-Process-Time"] = str(process_time)
         return response
-    
-    # Root endpoint
-    @app.get("/")
-    def root():
-        return FileResponse("templates/view/index.html")
     
     # Health check endpoint
     @app.get("/health")

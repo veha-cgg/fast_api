@@ -9,14 +9,20 @@
     <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
+    {% include "components/header.html" %}
+    
     <h1 class="text-center">Homepage</h1>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <h2>Welcome to the Homepage</h2>
-                <a href="/login" class="btn btn-primary">Login</a>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="/panel" class="btn btn-success">Admin Panel</a>
+                </div>
             </div>
         </div>
     </div>
+    
+    <script src="/static/js/index.js"></script>
 </body>
 </html>

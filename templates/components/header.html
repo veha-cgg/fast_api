@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-dark {% if page == 'index' %}mb-4{% endif %}" 
+style="background-color: #b9b9b9; box-shadow: 0 2px 4px rgba(0,0,0,.1); padding: 10px;">
+    <div class="container-fluid" >
+        <a class="navbar-brand" style="color: rgb(29, 29, 29); align-items: center; display: flex; justify-content: center;"
+         href="/" class="navbar-brand-link">{% if page == 'index' %}Homepage{% else %}Admin Panel{% endif %}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav" >
+            <ul class="navbar-nav ms-auto" >
+                <li class="nav-item ">
+                    <a class="nav-link {% if page == 'index' %}active{% endif %}" style="color: rgb(34, 34, 34);" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'panel' %}active{% endif %}" style="color: rgb(34, 34, 34);"
+                     href="/panel">{% if page == 'index' %}Admin Panel{% else %}Panel{% endif %}</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false" style="color: rgb(34, 34, 34); position: relative;">
+                        <i class="bi bi-bell"></i>
+                        <span id="notification-badge" class="notification-badge" style="display: none;">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationsDropdown">
+                        <li>
+                            <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span>Notifications</span>
+                                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="mark-all-read-btn" style="font-size: 0.75rem;">
+                                    Mark all as read
+                                </button>
+                            </h6>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <div id="notifications-list" class="notifications-list">
+                                <div class="notification-loading text-center p-3">
+                                    <div class="spinner-border spinner-border-sm" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <span class="ms-2">Loading notifications...</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-center" href="#" id="view-all-notifications">
+                                <small>View all notifications</small>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% if page == 'index' %}
+                <li class="nav-item">
+                    <a class="nav-link" style="color: rgb(34, 34, 34);" href="#" id="auth-link">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+

@@ -1,8 +1,12 @@
 from enum import Enum
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 from pydantic import EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.chats import Chat, UserChat, ChatRoom
+    from models.products import Product
 
 class UserRole(str, Enum):
     super_admin = "super_admin"
@@ -11,6 +15,8 @@ class UserRole(str, Enum):
     moderator = "moderator"
 
 class User(SQLModel, table=True):
+    __tablename__ = "user"
+    
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     email: EmailStr = Field(unique=True, index=True)
@@ -19,6 +25,16 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
+    
+    is_online: bool = Field(default=False)
+    last_seen: Optional[datetime] = None
+    
+    # Relationships
+    chats: List["Chat"] = Relationship(back_populates="sender", sa_relationship_kwargs={"foreign_keys": "Chat.sender_id"})
+    received_chats: List["Chat"] = Relationship(back_populates="receiver", sa_relationship_kwargs={"foreign_keys": "Chat.receiver_id"})
+    user_chats: List["UserChat"] = Relationship(back_populates="user")
+    notifications: List["UserNotification"] = Relationship(back_populates="user")
+    products: List["Product"] = Relationship(back_populates="user")
 
 class UserCreate(SQLModel):
     name: str
@@ -51,7 +67,8 @@ class TokenData(SQLModel):
     token_type: str = "bearer"
 
 class UserResponse(SQLModel):
-    data: UserData
+    message: str
+    data: Optional[UserData] = None
     token: TokenData
 
 class UpdateUserPassword(SQLModel):
@@ -79,3 +96,19 @@ class TokenPayload(SQLModel):
 
 class RefreshTokenRequest(SQLModel):
     refresh_token: str
+
+
+class UserNotification(SQLModel, table=True):
+    __tablename__ = "user_notifications"
+    
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    title: str
+    message: str
+    notification_type: str = Field(default="info") 
+    is_read: bool = Field(default=False)
+    read_at: Optional[datetime] = None
+    related_chat_id: Optional[int] = Field(default=None, foreign_key="chats.id")
+    created_at: datetime = Field(default_factory=datetime.now)
+    
+    user: "User" = Relationship(back_populates="notifications")
