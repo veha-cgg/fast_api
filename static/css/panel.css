@@ -190,8 +190,8 @@ body {
     transform: none;
 }
 
-.content-col {
-    padding: 1.5rem;
+.content-col-main {
+    /* padding: 1.5rem; */
     background: transparent;
 }
 

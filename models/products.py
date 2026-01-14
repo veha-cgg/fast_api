@@ -39,7 +39,6 @@ class ProductCreate(SQLModel):
     category_id: Optional[int] = Field(default=None, foreign_key="categories.id")
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
-
 class ProductUpdate(SQLModel):
     name: Optional[str] = None
     description: Optional[str] = None
