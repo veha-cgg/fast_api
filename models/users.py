@@ -7,6 +7,8 @@ from typing import Optional, List, TYPE_CHECKING
 if TYPE_CHECKING:
     from models.chats import Chat, UserChat, ChatRoom
     from models.products import Product
+    from models.providers import Provider
+    from models.orders import Order
 
 class UserRole(str, Enum):
     super_admin = "super_admin"
@@ -35,7 +37,9 @@ class User(SQLModel, table=True):
     user_chats: List["UserChat"] = Relationship(back_populates="user")
     notifications: List["UserNotification"] = Relationship(back_populates="user")
     products: List["Product"] = Relationship(back_populates="user")
-
+    providers: List["Provider"] = Relationship(back_populates="user")
+    orders: List["Order"] = Relationship(back_populates="user")
+    
 class UserCreate(SQLModel):
     name: str
     email: EmailStr
@@ -96,7 +100,6 @@ class TokenPayload(SQLModel):
 
 class RefreshTokenRequest(SQLModel):
     refresh_token: str
-
 
 class UserNotification(SQLModel, table=True):
     __tablename__ = "user_notifications"

@@ -3,40 +3,42 @@ from datetime import datetime
 from typing import Optional, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.images import Image, ImageData
+    from models.users import User
     from models.products import Product, ProductResponse
 
-
-class Category(SQLModel, table=True):
-    __tablename__ = "categories"
+class Provider(SQLModel, table=True):
+    __tablename__ = "providers"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(unique=True, index=True)
+    name: str
     description: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    images: List["Image"] = Relationship(back_populates="category")
-    products: List["Product"] = Relationship(back_populates="category")
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    user: Optional["User"] = Relationship(back_populates="providers")
 
-class CategoryCreate(SQLModel):
+    products: List["Product"] = Relationship(back_populates="provider")
+
+class ProviderCreate(SQLModel):
     name: str
     description: Optional[str] = None
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
-
-class CategoryUpdate(SQLModel):
+class ProviderUpdate(SQLModel):
     name: Optional[str] = None
     description: Optional[str] = None
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
-
-class CategoryResponse(SQLModel):
+class ProviderResponse(SQLModel):
     id: int
     name: str
     description: Optional[str]
     created_at: datetime
     updated_at: datetime
-    images: List["ImageData"] = []
+    user_id: Optional[int]
     products: List["ProductResponse"] = []
 
-from models.images import Image, ImageData  
-from models.products import Product, ProductResponse 
+from models.products import Product, ProductResponse  
+from models.users import User
+

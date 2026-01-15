@@ -1,25 +1,16 @@
-<nav class="navbar navbar-expand-lg navbar-dark {% if page == 'index' %}mb-4{% endif %}" 
-style="background-color: #b9b9b9; box-shadow: 0 2px 4px rgba(0,0,0,.1); padding: 10px;">
+<nav class="navbar navbar-expand-lg navbar-dark {% if page == 'index' %}mb-4{% endif %}" >
     <div class="container-fluid" >
-        <a class="navbar-brand" style="color: rgb(29, 29, 29); align-items: center; display: flex; justify-content: center;"
-         href="/" class="navbar-brand-link">{% if page == 'index' %}Homepage{% else %}Admin Panel{% endif %}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav" >
             <ul class="navbar-nav ms-auto" >
-                <li class="nav-item ">
-                    <a class="nav-link {% if page == 'index' %}active{% endif %}" style="color: rgb(34, 34, 34);" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if page == 'panel' %}active{% endif %}" style="color: rgb(34, 34, 34);"
-                     href="/panel">{% if page == 'index' %}Admin Panel{% else %}Panel{% endif %}</a>
-                </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" 
-                       data-bs-toggle="dropdown" aria-expanded="false" style="color: rgb(34, 34, 34); position: relative;">
+                    <a class="nav-link " href="#" id="notificationsDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false" style="color: rgb(0, 0, 0); position: relative;">
                         <i class="bi bi-bell"></i>
                         <span id="notification-badge" class="notification-badge" style="display: none;">0</span>
+                        <i class="bi bi-chevron-compact-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationsDropdown">
                         <li>
@@ -49,6 +40,23 @@ style="background-color: #b9b9b9; box-shadow: 0 2px 4px rgba(0,0,0,.1); padding:
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: rgb(34, 34, 34); font-weight: 600; font-size: 14px;">
+                        <i class="bi bi-person-check"></i>
+                        <span id="user-name"></span>
+                        <i class="bi bi-chevron-compact-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <h6 class="dropdown-header d-flex justify-content-between align-items-center" style="color: rgb(34, 34, 34); font-weight: 600;">
+                                <span id="user-email">name@example.com</span>
+                                <!-- <span class="badge bg-primary" id="user-role">user</span> -->
+                            </h6>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" style="color: rgb(34, 34, 34); font-weight: 600; background: transparent;" href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </li>
                 {% if page == 'index' %}
                 <li class="nav-item">
                     <a class="nav-link" style="color: rgb(34, 34, 34);" href="#" id="auth-link">Login</a>
@@ -59,3 +67,4 @@ style="background-color: #b9b9b9; box-shadow: 0 2px 4px rgba(0,0,0,.1); padding:
     </div>
 </nav>
 
+<script src="/static/js/panel.js"></script>

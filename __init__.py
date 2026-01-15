@@ -8,6 +8,7 @@ __all__ = [
     "image_module_router",
     "chat_module_router",
     "product_module_router",
-    "web_router"
+    "web_router",
+    "orders_module_router"
     ]
 

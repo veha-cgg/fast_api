@@ -42,22 +42,14 @@ function initializePanel() {
 
 function displayUserInfo() {
     const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
-    if (userData.email) {
-        const navbarNav = document.querySelector('.navbar-nav');
-        if (navbarNav) {
-            const userInfo = document.createElement('li');
-            userInfo.className = 'nav-item dropdown';
-            userInfo.style.color = 'rgb(34, 34, 34)';
-            userInfo.innerHTML = `
-                <a class="nav-link dropdown-toggle" style="color: rgb(34, 34, 34); font-weight: 600; font-size: 14px;"
-                 href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    ${userData.email}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" style="color: rgb(34, 34, 34); font-weight: 600;" href="#" onclick="logout()">Logout</a></li>
-                </ul>
-            `;
-            navbarNav.appendChild(userInfo);
+    if (userData && (userData.name || userData.email)) {
+        const userNameEl = document.getElementById('user-name');
+        const userEmailEl = document.getElementById('user-email');
+        if (userNameEl) {
+            userNameEl.textContent = userData.name || userData.email || 'User';
+        }
+        if (userEmailEl) {
+            userEmailEl.textContent = userData.email || userData.name || 'name@example.com';
         }
     }
 }
@@ -94,17 +86,9 @@ async function loadDashboardData() {
             return;
         }
         
-        const usersResponse = await fetch('/api/v1/users/get-users', {
-            headers: getAuthHeaders()
-        });
-        
-        if (handleApiError(usersResponse)) return;
-        
-        if (usersResponse.ok) {
-            const users = await usersResponse.json();
-            document.getElementById('total-users').textContent = users.length || 0;
-        } else {
-            console.error('Failed to load users:', usersResponse.status);
+        // Load total users from users.js
+        if (typeof loadTotalUsers === 'function') {
+            await loadTotalUsers();
         }
         
         const categoriesResponse = await fetch('/api/v1/categories/get-categories', {
@@ -140,7 +124,9 @@ async function loadDashboardData() {
 function loadSectionData(section) {
     switch(section) {
         case 'users':
-            loadUsers();
+            if (typeof loadUsers === 'function') {
+                loadUsers();
+            }
             break;
         case 'categories':
             loadCategories();
@@ -158,53 +144,6 @@ function loadSectionData(section) {
                 window.chatInitialized = true;
             }
             break;
-    }
-}
-
-async function loadUsers() {
-    const tbody = document.getElementById('users-table-body');
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
-
-    try {
-        const token = localStorage.getItem('auth_token');
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
-        
-        const response = await fetch('/api/v1/users/get-users', {
-            headers: getAuthHeaders()
-        });
-        
-        if (handleApiError(response)) return;
-        
-        if (response.ok) {
-            const users = await response.json();
-            
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No users found</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = users.map(user => `
-                <tr>
-                    <td>${user.id || 'N/A'}</td>
-                    <td>${user.email || 'N/A'}</td>
-                    <td><span class="badge bg-primary">${user.role || 'user'}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary btn-action" onclick="viewUser(${user.id})">View</button>
-                        <button class="btn btn-sm btn-danger btn-action" onclick="deleteUser(${user.id})">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
-        } else {
-            const errorData = await response.json().catch(() => ({}));
-            const errorMsg = errorData.detail || 'Error loading users';
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${errorMsg}</td></tr>`;
-        }
-    } catch (error) {
-        console.error('Error loading users:', error);
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users</td></tr>';
     }
 }
 
@@ -302,16 +241,7 @@ async function loadImages() {
     }
 }
 
-// Action functions
-function viewUser(userId) {
-    alert(`View user ${userId} - Functionality to be implemented`);
-}
-
-function deleteUser(userId) {
-    if (confirm(`Are you sure you want to delete user ${userId}?`)) {
-        alert(`Delete user ${userId} - Functionality to be implemented`);
-    }
-}
+// Action functions (viewUser and deleteUser moved to users.js)
 
 function viewCategory(categoryId) {
     alert(`View category ${categoryId} - Functionality to be implemented`);

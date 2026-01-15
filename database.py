@@ -1,13 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session, select
 from starlette.config import Config
-from models.users import User, UserRole, UserNotification
-from models.chats import Chat, UserChat, ChatRoom, ChatRoomParticipant
-from models.categories import Category
-from models.images import Image
-from models.products import Product
-
-# Import all models to ensure SQLAlchemy can resolve relationships
-# This must happen before create_db_and_tables() is called
+from models.users import User, UserRole
 
 config = Config(".env")
 
@@ -59,7 +52,7 @@ async def connect_to_database():
         create_default_user()
     except Exception as e:
         raise e
+
 async def disconnect_from_database():
     pass
     
-

@@ -1,3 +1,5 @@
+import { getUserData } from './auth.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('auth_token');
     if (!token) {
@@ -9,14 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function displayUserInfo() {
-    const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+    const userData = getUserData();
     if (userData.email) {
         const welcomeSection = document.querySelector('.col-md-6');
         if (welcomeSection) {
             const userInfo = document.createElement('div');
             userInfo.className = 'alert alert-info mt-3';
             userInfo.innerHTML = `
-                <strong>Welcome, ${userData.email}!</strong> 
+                <strong>Welcome, ${userData.name || userData.email || 'User'}!</strong> 
                 <span class="badge bg-primary">${userData.role || 'user'}</span>
             `;
             welcomeSection.insertBefore(userInfo, welcomeSection.querySelector('.d-flex'));

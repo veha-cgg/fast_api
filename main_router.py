@@ -8,6 +8,8 @@ from event.category_module import router as category_module_router
 from event.image_module import router as image_module_router
 from event.chat_module import router as chat_module_router
 from event.product_module import router as product_module_router
+from event.providers_module import router as providers_module_router
+from event.orders_module import router as orders_module_router
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
@@ -23,7 +25,8 @@ router.include_router(category_module_router, tags=["categories"])
 router.include_router(image_module_router, tags=["images"])
 router.include_router(chat_module_router, tags=["websocket"])
 router.include_router(product_module_router, tags=["products"])
-
+router.include_router(providers_module_router, tags=["providers"])
+router.include_router(orders_module_router, tags=["orders"])
 # Web routes router
 web_router = APIRouter()
 

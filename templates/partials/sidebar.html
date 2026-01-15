@@ -1,28 +1,47 @@
 <link rel="stylesheet" href="/static/css/panel.css">
-<div class="sidebar-col" style=" width: 20%; height: 100vh" >
+<div class="sidebar-col" style=" width: 15%; height: 100vh" >
     <div class="sidebar-card">
-        <div class="sidebar-card-header" style="background-color: #b9b9b9; box-shadow: 0 2px 4px rgba(0,0,0,.1); padding: 10px;">
-            <h5 style="color: rgb(34, 34, 34); text-align: center; font-weight: 600; font-size: 26px; " 
-            >List of content</h5>
+        <div class="sidebar-card-header" style="background-color: #1d1d1d; box-shadow: 0 2px 4px rgba(0,0,0,.1); border-bottom: 1px solid #333333; display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+            <h5 style="color: rgb(255, 255, 255); font-weight: 600; font-size: 20px; margin: 0; flex: 1; text-align: center;" 
+            >CGG Admin Panel</h5>
+            <button class="sidebar-toggle-btn" id="sidebarToggle" onclick="toggleSidebar()" style="background: transparent; border: none; color: rgb(255, 255, 255); font-size: 20px; cursor: pointer; padding: 5px 10px; border-radius: 4px; transition: all 0.3s ease;">
+                <i class="bi bi-layout-sidebar" id="sidebarToggleIcon"></i>
+            </button>
         </div>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item list-group-item-action active" data-section="dashboard">
+                <i class="bi-solid bi-house"></i>
                 Dashboard
             </a>
         </div>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item list-group-item-action" data-section="users">
+                <i class="bi bi-person-lines-fill"></i>
                 Users
             </a>
         </div>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item list-group-item-action" data-section="categories">
+                <i class="bi bi-bookmarks-fill"></i>
                 Categories
             </a>
         </div>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item list-group-item-action" data-section="images">
+                <i class="bi bi-file-image"></i>
                 Images
+            </a>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action" data-section="orders">
+                <i class="bi bi-bag"></i>
+                Order
+            </a>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action" data-section="providers">
+                <i class="bi bi-person-fill"></i>
+                Providers
             </a>
         </div>
         <div class="list-group list-group-flush">
