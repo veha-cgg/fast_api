@@ -1,14 +1,15 @@
 from sqlmodel import SQLModel, create_engine, Session, select
 from starlette.config import Config
 from models.users import User, UserRole
+import os
 
 config = Config(".env")
 
-DB_USER = config("DB_USER")
-DB_PASSWORD = config("DB_PASSWORD")
-DB_HOST = config("DB_HOST", default="127.0.0.1")
-DB_NAME = config("DB_NAME")
-DB_PORT = config("DB_PORT", cast=int, default=3306)
+DB_USER = config("DB_USER", default=os.getenv("DB_USER"))
+DB_PASSWORD = config("DB_PASSWORD", default=os.getenv("DB_PASSWORD"))
+DB_HOST = config("DB_HOST", default=os.getenv("DB_HOST", "127.0.0.1"))
+DB_NAME = config("DB_NAME", default=os.getenv("DB_NAME"))
+DB_PORT = config("DB_PORT", cast=int, default=int(os.getenv("DB_PORT", "3306")))
 
 DATABASE_URL = (
     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}"

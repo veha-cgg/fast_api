@@ -10,6 +10,7 @@ from event.chat_module import router as chat_module_router
 from event.product_module import router as product_module_router
 from event.providers_module import router as providers_module_router
 from event.orders_module import router as orders_module_router
+from event.scraping_module import router as scraping_module_router
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
@@ -27,6 +28,7 @@ router.include_router(chat_module_router, tags=["websocket"])
 router.include_router(product_module_router, tags=["products"])
 router.include_router(providers_module_router, tags=["providers"])
 router.include_router(orders_module_router, tags=["orders"])
+router.include_router(scraping_module_router, tags=["scraping"])
 # Web routes router
 web_router = APIRouter()
 
@@ -41,4 +43,8 @@ def read_login(request: Request):
 @web_router.get("/panel")
 def read_panel(request: Request):
     return templates.TemplateResponse("panel.html", {"request": request, "page": "panel"})
+
+@web_router.get("/scraping")
+def read_scraping(request: Request):
+    return templates.TemplateResponse("scraping.html", {"request": request, "page": "scraping"})
       

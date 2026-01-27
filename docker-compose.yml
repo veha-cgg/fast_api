@@ -1,19 +1,37 @@
-version: "3.9"
+version: '3.9'
 
 services:
   backend:
-    container_name: backend
+    container_name: python-backend
     build: .
     restart: always
     ports:
-      - "8080:80" 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "8068:8068"
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: mysql       
       DB_PORT: 3306
-      DB_DATABASE: mydb
-      DB_USERNAME: veha
+      DB_NAME: mydb
+      DB_USER: veha
       DB_PASSWORD: vehacgg123
+    depends_on:
+      - mysql
     volumes:
-      - ./:/var/www/html 
+      - ./:/app
+      - /app/__pycache__
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: panel-password
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: veha
+      MYSQL_PASSWORD: vehacgg123
+    ports:
+      - "33063:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

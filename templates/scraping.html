@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraping Tool</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/static/css/scraping.css">
+</head>
+<body>
+    {% include "components/header.html" %}
+    
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4"><i class="bi bi-globe"></i> Web Scraping Tool</h1>
+                
+                <!-- URL Scraping Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-link-45deg"></i> Scrape by URL</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="urlScrapingForm">
+                            <div class="mb-3">
+                                <label for="urlInput" class="form-label">Website URL</label>
+                                <input type="url" class="form-control" id="urlInput" 
+                                       placeholder="https://example.com" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Custom CSS Selectors (Optional)</label>
+                                <div id="selectorsContainer">
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control selector-key" 
+                                               placeholder="Key (e.g., title)" name="selector-key[]">
+                                        <input type="text" class="form-control selector-value" 
+                                               placeholder="CSS Selector (e.g., h1)" name="selector-value[]">
+                                        <button type="button" class="btn btn-danger remove-selector">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-secondary" id="addSelector">
+                                    <i class="bi bi-plus-circle"></i> Add Selector
+                                </button>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Scrape Website
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- HTML Content Scraping Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-code-slash"></i> Scrape HTML Content</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="htmlScrapingForm">
+                            <div class="mb-3">
+                                <label for="htmlContent" class="form-label">HTML Content</label>
+                                <textarea class="form-control" id="htmlContent" rows="10" 
+                                          placeholder="Paste your HTML content here..." required></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Custom CSS Selectors (Optional)</label>
+                                <div id="htmlSelectorsContainer">
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control html-selector-key" 
+                                               placeholder="Key (e.g., title)" name="html-selector-key[]">
+                                        <input type="text" class="form-control html-selector-value" 
+                                               placeholder="CSS Selector (e.g., h1)" name="html-selector-value[]">
+                                        <button type="button" class="btn btn-danger remove-html-selector">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-secondary" id="addHtmlSelector">
+                                    <i class="bi bi-plus-circle"></i> Add Selector
+                                </button>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-code-square"></i> Scrape HTML
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="card" id="resultsCard" style="display: none;">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Scraping Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="resultsContent"></div>
+                        <button class="btn btn-secondary mt-3" onclick="copyResults()">
+                            <i class="bi bi-clipboard"></i> Copy Results
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Scraping website...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/scraping.js"></script>
+</body>
+</html>
